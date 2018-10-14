@@ -21,7 +21,7 @@ int main()
 {
 	pthread_t ptid, ctid;
 
-//	buffer = (char *) malloc(sizeof(char) * buf_size); 
+
 int r=32,c=2;
 
 buffer = (int **)malloc(r * sizeof(int *)); 
@@ -45,23 +45,20 @@ int min,sec_i;
 srand (time(NULL));
 	for(int i = 1; i <= counter; i++){
 		pthread_mutex_lock(&mux);
-		if(buf_index == -1){ /* Creating constraints on the index so it doesnt go out of bound */
+		if(buf_index == -1){ 
 			buf_index++;
 		}
-		if(buf_index == buf_size){ /* Check if buffer is full, if so, wait for signal not full */
+		if(buf_index == buf_size){ 
 			pthread_cond_wait(&buf_not_full, &mux);
 		} 
-		//if(buf_index == -1){
-		//	buf_index++;
-		//}
-		buffer[buf_index][0] = i; /* Puting a value into the buffer to produce */
+		buffer[buf_index][0] = i; 
                 sec_i= rand() % 7  + 2;
-		buffer[buf_index][1] = sec_i; /* Puting a value into the buffer to produce */
+		buffer[buf_index][1] = sec_i; 
 
 		printf("Producer produce, Index %d : %d  \n", buf_index, buffer[buf_index][0]);
 	buf_index++; 	
 		pthread_mutex_unlock(&mux);
-		pthread_cond_signal(&buf_not_empty); /* Signal Comsumer that buffer is not empty */
+		pthread_cond_signal(&buf_not_empty); 
 min = rand() % 4  + 3;
 sleep(min);
 	}
@@ -75,12 +72,12 @@ void *Consumer()
 sleep(10);
 	for(int j = 1; j <= counter; j++){
 		pthread_mutex_lock(&mux);
-		buf_index--; /* Decrement to get adjusted index */
+		buf_index--; 
                 
 		if(buf_index == -1){
 			pthread_cond_wait(&buf_not_empty, &mux);
 		}
-		else if(buf_index == buf_size){ /*  Constraining the index */
+		else if(buf_index == buf_size){ 
 			buf_index--;
 		}
         else{
@@ -97,10 +94,10 @@ sleep(10);
            buf_index--;
                 
 		}
-            //    sleep(buffer[buf_index][1]);
+            
                 
 		pthread_mutex_unlock(&mux);
-		pthread_cond_signal(&buf_not_full);  /* Signal Producer that buffer is not full */
+		pthread_cond_signal(&buf_not_full);  
 	 sleep(temp);
 	}
 	return NULL;
